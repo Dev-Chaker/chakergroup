@@ -125,7 +125,7 @@
     .cta:hover{transform:translateY(-1px)}
 
     footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px}
-    /* Dock button */
+  /* Dock button */
 .cg-dock{
   margin-left:8px;
   background:#ffffff12;
@@ -136,15 +136,30 @@
   cursor:pointer;
 }
 
-/* Mode dock-bottom (force le tiroir en bas même sur desktop) */
+/* Default (Right) already exists via .cg-games styles */
+
+/* Bottom mode (70% height) */
 .cg-games.is-bottom{
-  width: 100%;
-  height: 70vh;
+  width:100%;
+  height:70vh;             /* fallback */
+  height:70dvh;            /* iOS/modern */
   left:0; right:0; bottom:0; top:auto;
   border-left:none; border-top:1px solid #ffffff22;
   transform: translateY(100%);
 }
 .cg-games.is-bottom[aria-hidden="false"]{ transform: translateY(0); }
+
+/* Full-screen mode */
+.cg-games.is-full{
+  width:100%;
+  height:100vh;            /* fallback */
+  height:100dvh;           /* iOS/modern */
+  left:0; right:0; top:0; bottom:0;
+  border:none; border-radius:0;
+  transform: translateY(100%);
+}
+.cg-games.is-full[aria-hidden="false"]{ transform: translateY(0); }
+
 
   </style>
 </head>
@@ -193,7 +208,7 @@
   </div>
 
   <!-- Nouveau : bouton Dock -->
-  <button class="cg-dock" aria-label="Dock position">Dock: Right</button>
+<button class="cg-dock" aria-label="Dock position">Dock: Right</button>
 
   <button class="cg-close" aria-label="Close games">✕</button>
 </header>
@@ -242,18 +257,29 @@
   const tabs     = Array.from(drawer.querySelectorAll('.cg-tabs button'));
   const frames   = Array.from(drawer.querySelectorAll('.cg-frame'));
 
-  // ---- Dock preference (persist) ----
-  const pref = localStorage.getItem('cgDock');
-  if (pref === 'bottom') {
-    drawer.classList.add('is-bottom');
-    dockBtn.textContent = 'Dock: Bottom';
-  }
+  // ---- Dock preference (cycle Right -> Bottom -> Full) ----
+  const order = ['right','bottom','full'];
+  let mode = localStorage.getItem('cgDock') || 'right';
 
+  function applyMode(){
+    drawer.classList.toggle('is-bottom', mode==='bottom');
+    drawer.classList.toggle('is-full',   mode==='full');
+    dockBtn.textContent = 'Dock: ' + (mode[0].toUpperCase()+mode.slice(1));
+    localStorage.setItem('cgDock', mode);
+  }
+  applyMode();
+
+  dockBtn.addEventListener('click', ()=>{
+    const idx = order.indexOf(mode);
+    mode = order[(idx+1)%order.length];
+    applyMode();
+  });
+
+  // ---- Open / Close ----
   function open(){
     drawer.setAttribute('aria-hidden','false');
     backdrop.hidden = false;
     toggleBtn?.setAttribute('aria-expanded','true');
-    // lazy load current active frame
     const active = drawer.querySelector('.cg-frame.is-active');
     if(active && !active.src){ active.src = active.dataset.src; }
   }
@@ -263,7 +289,6 @@
     toggleBtn?.setAttribute('aria-expanded','false');
   }
 
-  // Toggle open/close
   toggleBtn?.addEventListener('click', ()=>{
     const hidden = drawer.getAttribute('aria-hidden') !== 'false';
     hidden ? open() : close();
@@ -272,14 +297,7 @@
   backdrop.addEventListener('click', close);
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close(); });
 
-  // Dock toggle
-  dockBtn.addEventListener('click', ()=>{
-    const isBottom = drawer.classList.toggle('is-bottom');
-    dockBtn.textContent = isBottom ? 'Dock: Bottom' : 'Dock: Right';
-    localStorage.setItem('cgDock', isBottom ? 'bottom' : 'right');
-  });
-
-  // Tabs switching (3 onglets supportés)
+  // ---- Tabs switching ----
   tabs.forEach((btn, idx)=>{
     btn.addEventListener('click', ()=>{
       tabs.forEach((b,i)=>{
@@ -293,6 +311,7 @@
   });
 })();
 </script>
+
 
 </body>
 </html>
