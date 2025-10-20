@@ -38,21 +38,42 @@ const C=document.getElementById('game'), X=C.getContext('2d'); const DPR=Math.ma
 let W=0,H=0; function resize(){ W=innerWidth; H=innerHeight; C.width=Math.floor(W*DPR); C.height=Math.floor(H*DPR); X.setTransform(DPR,0,0,DPR,0,0);} addEventListener('resize',resize); resize();
 
 /* ===== World & lanes ===== */
-const laneCount=3, margin=Math.max(100, W*0.12);
-function road(){ const left=margin, width=W-margin*2; return {left,width,lw:width/laneCount,right:left+width}; }
+const laneCount=3, marginBase=0.12; // % of width
+function road(){ const margin=Math.max(100, W*marginBase); const left=margin, width=W-margin*2; return {left,width,lw:width/laneCount,right:left+width}; }
 let R=road();
 
 /* ===== Input ===== */
-const keys={}; addEventListener('keydown',e=>{keys[e.key]=keys[e.key.toLowerCase()]=true; if(!running&&!over) start(); if(over&&(e.key==='r'||e.key==='R')) restart();});
+const keys={};
+addEventListener('keydown',e=>{keys[e.key]=keys[e.key.toLowerCase()]=true; if(!running&&!over) start(); if(over&&(e.key==='r'||e.key==='R')) restart();});
 addEventListener('keyup',e=>{keys[e.key]=keys[e.key.toLowerCase()]=false});
+
+// Robust mobile bindings (pointer + touch + mouse)
+function bindPress(el, onDown, onUp){
+  const down = ev=>{ev.preventDefault(); onDown();};
+  const up   = ev=>{ev.preventDefault(); onUp();};
+  el.addEventListener('pointerdown', down, {passive:false});
+  el.addEventListener('pointerup',   up,   {passive:false});
+  el.addEventListener('pointercancel', up);
+  el.addEventListener('touchstart',  down, {passive:false});
+  el.addEventListener('touchend',    up);
+  el.addEventListener('mousedown',   down);
+  el.addEventListener('mouseup',     up);
+  el.addEventListener('click',       ev=>ev.preventDefault()); // kill ghost click
+}
+
 const L=document.getElementById('left'), Rt=document.getElementById('right');
-function bind(btn, set){btn.addEventListener('pointerdown',e=>{e.preventDefault(); set(true)}); ['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,()=>set(false))); btn.addEventListener('click',e=>e.preventDefault());}
-bind(L, v=>{keys['arrowleft']=keys['a']=v; if(!running&&!over) start();});
-bind(Rt, v=>{keys['arrowright']=keys['d']=v; if(!running&&!over) start();});
+bindPress(L, ()=>{ keys['arrowleft']=keys['a']=true;  if(!running&&!over) start(); }, ()=>{ keys['arrowleft']=keys['a']=false; });
+bindPress(Rt,()=>{ keys['arrowright']=keys['d']=true; if(!running&&!over) start(); }, ()=>{ keys['arrowright']=keys['d']=false; });
+
+// Global tap anywhere starts (iOS-safe)
+const tapStart = ()=>{ if(!running && !over) start(); };
+document.addEventListener('pointerdown', tapStart, {passive:true});
+document.addEventListener('touchstart',  tapStart, {passive:true});
 
 /* ===== State ===== */
 let running=false, over=false, last=performance.now(), t=0, speed=220, diff=1, spawnAcc=0, score=0, shake=0;
 const traffic=[]; const player={lane:1,x:0,y:0,w:Math.max(50,Math.min(70,W*0.06)),h:Math.max(90,Math.min(120,H*0.18)),tx:0};
+
 function laneCenter(i){ return R.left + R.lw*i + R.lw/2; }
 function syncPlayer(){ player.tx = laneCenter(player.lane) - player.w/2; player.x = player.tx; player.y = H - player.h - 60; }
 syncPlayer();
@@ -85,11 +106,12 @@ function car(x,y,w,h,c,isP){
 function loop(now){
   if(!running) return requestAnimationFrame(loop);
   const dt=Math.min(.033,(now-last)/1000); last=now; t+=dt; diff=1+t*.12; speed=220+(diff-1)*90;
-  // recompute road on resize/orientation change
-  R=road(); syncPlayer(); // keep player aligned to lane centers after width changes
 
-  if(keys['ArrowLeft']||keys['a']){ player.lane=clamp(player.lane-1,0,laneCount-1); keys['ArrowLeft']=keys['a']=false; shakeIt(4);}
-  if(keys['ArrowRight']||keys['d']){ player.lane=clamp(player.lane+1,0,laneCount-1); keys['ArrowRight']=keys['d']=false; shakeIt(4);}
+  // recompute road on resize/orientation change (keeps alignment)
+  R=road(); syncPlayer();
+
+  if(keys['ArrowLeft']||keys['a']){ player.lane=clamp(player.lane-1,0,laneCount-1); keys['ArrowLeft']=keys['a']=false; player.tx = laneCenter(player.lane) - player.w/2; shakeIt(4);}
+  if(keys['ArrowRight']||keys['d']){ player.lane=clamp(player.lane+1,0,laneCount-1); keys['ArrowRight']=keys['d']=false; player.tx = laneCenter(player.lane) - player.w/2; shakeIt(4);}
   player.x += (player.tx - player.x) * Math.min(1, dt*12);
 
   spawnAcc+=dt; const interval=Math.max(.45,1.05-diff*.12); if(spawnAcc>=interval){spawnAcc=0; spawn();}
@@ -126,5 +148,6 @@ startEl.addEventListener('pointerdown', start); overEl.addEventListener('pointer
 
 /* Idle frame */ requestAnimationFrame(loop);
 </script>
+
 </body>
 </html>
