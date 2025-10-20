@@ -125,6 +125,27 @@
     .cta:hover{transform:translateY(-1px)}
 
     footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px}
+    /* Dock button */
+.cg-dock{
+  margin-left:8px;
+  background:#ffffff12;
+  border:1px solid #ffffff22;
+  color:var(--ink);
+  border-radius:10px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+
+/* Mode dock-bottom (force le tiroir en bas même sur desktop) */
+.cg-games.is-bottom{
+  width: 100%;
+  height: 70vh;
+  left:0; right:0; bottom:0; top:auto;
+  border-left:none; border-top:1px solid #ffffff22;
+  transform: translateY(100%);
+}
+.cg-games.is-bottom[aria-hidden="false"]{ transform: translateY(0); }
+
   </style>
 </head>
 
@@ -163,13 +184,20 @@
   <!-- ===== Games Aside / Drawer ===== -->
   <aside id="cg-games" class="cg-games" aria-hidden="true">
     <header class="cg-games__head">
-      <strong>Mini-Games</strong>
-      <div class="cg-tabs" role="tablist" aria-label="Select game">
-        <button role="tab" aria-selected="true" data-game="space" class="is-active">Space Shooter</button>
-        <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
-      </div>
-      <button class="cg-close" aria-label="Close games">✕</button>
-    </header>
+  <strong>Mini-Games</strong>
+
+  <div class="cg-tabs" role="tablist" aria-label="Select game">
+    <button role="tab" aria-selected="true"  data-game="space"     class="is-active">Space Shooter</button>
+    <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
+    <button role="tab" aria-selected="false" data-game="asteroids">Asteroids</button>
+  </div>
+
+  <!-- Nouveau : bouton Dock -->
+  <button class="cg-dock" aria-label="Dock position">Dock: Right</button>
+
+  <button class="cg-close" aria-label="Close games">✕</button>
+</header>
+
 
     <div class="cg-games__body">
       <!-- Iframes lazy (chargées au 1er affichage) -->
@@ -190,57 +218,82 @@
         sandbox="allow-scripts allow-pointer-lock"
         referrerpolicy="no-referrer"
       ></iframe>
+      <iframe
+  title="Asteroids"
+  data-src="games/asteroids-lite.html"
+  class="cg-frame"
+  loading="lazy"
+  sandbox="allow-scripts allow-pointer-lock"
+  referrerpolicy="no-referrer"
+></iframe>
+
     </div>
   </aside>
   <div class="cg-games-backdrop" hidden></div>
 
   <!-- === SCRIPT DU PANNEAU JEUX (à la fin, avant </body>) === -->
   <script>
-  (function(){
-    const drawer = document.getElementById('cg-games');
-    const backdrop = document.querySelector('.cg-games-backdrop');
-    const toggleBtn = document.querySelector('.cg-games-toggle');
-    const closeBtn = drawer.querySelector('.cg-close');
-    const tabs = drawer.querySelectorAll('.cg-tabs button');
-    const frames = drawer.querySelectorAll('.cg-frame');
+(function(){
+  const drawer   = document.getElementById('cg-games');
+  const backdrop = document.querySelector('.cg-games-backdrop');
+  const toggleBtn= document.querySelector('.cg-games-toggle');
+  const closeBtn = drawer.querySelector('.cg-close');
+  const dockBtn  = drawer.querySelector('.cg-dock');
+  const tabs     = Array.from(drawer.querySelectorAll('.cg-tabs button'));
+  const frames   = Array.from(drawer.querySelectorAll('.cg-frame'));
 
-    function open(){
-      drawer.setAttribute('aria-hidden','false');
-      backdrop.hidden = false;
-      toggleBtn?.setAttribute('aria-expanded','true');
-      // lazy load visible frame
-      const active = drawer.querySelector('.cg-frame.is-active');
-      if(active && !active.src){ active.src = active.dataset.src; }
-    }
-    function close(){
-      drawer.setAttribute('aria-hidden','true');
-      backdrop.hidden = true;
-      toggleBtn?.setAttribute('aria-expanded','false');
-    }
+  // ---- Dock preference (persist) ----
+  const pref = localStorage.getItem('cgDock');
+  if (pref === 'bottom') {
+    drawer.classList.add('is-bottom');
+    dockBtn.textContent = 'Dock: Bottom';
+  }
 
-    toggleBtn?.addEventListener('click', ()=>{
-      const hidden = drawer.getAttribute('aria-hidden') !== 'false';
-      hidden ? open() : close();
-    });
-    closeBtn.addEventListener('click', close);
-    backdrop.addEventListener('click', close);
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape') close();
-    });
+  function open(){
+    drawer.setAttribute('aria-hidden','false');
+    backdrop.hidden = false;
+    toggleBtn?.setAttribute('aria-expanded','true');
+    // lazy load current active frame
+    const active = drawer.querySelector('.cg-frame.is-active');
+    if(active && !active.src){ active.src = active.dataset.src; }
+  }
+  function close(){
+    drawer.setAttribute('aria-hidden','true');
+    backdrop.hidden = true;
+    toggleBtn?.setAttribute('aria-expanded','false');
+  }
 
-    // Tabs switching
-    tabs.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        tabs.forEach(b=>{ b.classList.toggle('is-active', b===btn); b.setAttribute('aria-selected', b===btn); });
-        frames.forEach((f,i)=>{
-          const active = tabs[i]===btn;
-          f.classList.toggle('is-active', active);
-          if(active && !f.src){ f.src = f.dataset.src; } // lazy on activation
-        });
+  // Toggle open/close
+  toggleBtn?.addEventListener('click', ()=>{
+    const hidden = drawer.getAttribute('aria-hidden') !== 'false';
+    hidden ? open() : close();
+  });
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close(); });
+
+  // Dock toggle
+  dockBtn.addEventListener('click', ()=>{
+    const isBottom = drawer.classList.toggle('is-bottom');
+    dockBtn.textContent = isBottom ? 'Dock: Bottom' : 'Dock: Right';
+    localStorage.setItem('cgDock', isBottom ? 'bottom' : 'right');
+  });
+
+  // Tabs switching (3 onglets supportés)
+  tabs.forEach((btn, idx)=>{
+    btn.addEventListener('click', ()=>{
+      tabs.forEach((b,i)=>{
+        const active = i===idx;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-selected', String(active));
+        frames[i].classList.toggle('is-active', active);
+        if(active && !frames[i].src){ frames[i].src = frames[i].dataset.src; }
       });
     });
-  })();
-  </script>
+  });
+})();
+</script>
+
 </body>
 </html>
 
