@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Asteroids Lite</title>
+<style>
+  :root{--bg1:#0f1020;--bg2:#1b1e3c;--ink:#e8eaf6;--muted:#aeb3d0;--blue:#7c9aff;--cyan:#52e0c4;--red:#ff6b6b}
+  html,body{height:100%;margin:0}
+  body{
+    background:
+      radial-gradient(1200px 800px at 20% 10%, #2a2f6d55 0%, transparent 60%),
+      radial-gradient(1200px 800px at 80% 90%, #1bb1a555 0%, transparent 60%),
+      linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--ink); font:14px system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    overflow:hidden;
+  }
+  canvas{display:block; width:100vw; height:100vh}
+  .hud{position:fixed; left:10px; right:10px; top:8px; display:flex; justify-content:space-between; color:var(--muted); text-shadow:0 1px 0 #0008}
+  .hud b{color:var(--ink)}
+  .overlay{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; text-align:center}
+  .overlay.hide{display:none}
+  .badge{display:inline-block; padding:6px 10px; border-radius:999px; background:#ffffff14; border:1px solid #ffffff1f}
+  /* Mobile controls */
+  .ui{position:fixed; left:50%; bottom:14px; transform:translateX(-50%); display:grid; grid-template-columns:72px 72px 72px; gap:12px; z-index:5}
+  .ui button{padding:14px; border-radius:14px; border:1px solid #ffffff20; background:#ffffff14; color:var(--ink); font-weight:700}
+  @media (min-width:900px){ .ui{display:none} }
+</style>
+<body>
+  <canvas id="game" aria-label="Asteroids Lite"></canvas>
+  <div class="hud"><div>Score: <b id="score">0</b></div><div>Lives: <b id="lives">3</b></div></div>
+  <div id="start" class="overlay">
+    <div style="font-weight:800;font-size:20px">🪐 Asteroids Lite</div>
+    <div>Rotate, thrust, shoot. Wrap-around space.</div>
+    <div><span class="badge">Controls — Left/Right: rotate • Up: thrust • Space: fire • R: restart</span></div>
+    <div><span class="badge">Tap buttons on mobile to play</span></div>
+  </div>
+  <div id="over" class="overlay hide">
+    <div style="font-weight:800;font-size:20px">💥 Ship destroyed</div>
+    <div>Final score: <b id="final"></b></div>
+    <div><span class="badge">Press R or tap to restart</span></div>
+  </div>
+  <div class="ui">
+    <button id="left">⟲</button>
+    <button id="thrust">↑</button>
+    <button id="right">⟳</button>
+  </div>
+
+<script>
+/* ===== Canvas / DPI ===== */
+const C=document.getElementById('game'), X=C.getContext('2d'); const DPR=Math.max(1,Math.floor(devicePixelRatio||1));
+let W=0,H=0; function resize(){ W=innerWidth; H=innerHeight; C.width=Math.floor(W*DPR); C.height=Math.floor(H*DPR); X.setTransform(DPR,0,0,DPR,0,0);} addEventListener('resize',resize); resize();
+
+/* ===== Utilities ===== */
+const TAU=Math.PI*2;
+const rand=(a,b)=>Math.random()*(b-a)+a;
+function wrap(o){ if(o.x<0) o.x+=W; if(o.x>W) o.x-=W; if(o.y<0) o.y+=H; if(o.y>H) o.y-=H; }
+function len(x,y){ return Math.sqrt(x*x+y*y); }
+
+/* ===== State ===== */
+let running=false, over=false, last=performance.now(), t=0, score=0, lives=3;
+const bullets=[], rocks=[], particles=[];
+const ship={x:W/2,y:H/2, a:-Math.PI/2, vx:0, vy:0, thrust:0, cooldown:0, inv:0};
+
+/* ===== Input (keyboard + touch) ===== */
+const keys={}; addEventListener('keydown',e=>{keys[e.key]=keys[e.key.toLowerCase()]=true; if(!running&&!over) start(); if(over&&(e.key==='r'||e.key==='R')) restart(); if(e.code==='Space') e.preventDefault();});
+addEventListener('keyup',  e=>{keys[e.key]=keys[e.key.toLowerCase()]=false});
+const L=document.getElementById('left'), R=document.getElementById('right'), T=document.getElementById('thrust');
+function bind(btn, set){btn.addEventListener('pointerdown',e=>{e.preventDefault(); set(true)}); ['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,()=>set(false))); btn.addEventListener('click',e=>e.preventDefault());}
+bind(L, v=>{keys['arrowleft']=keys['a']=v; if(!running&&!over) start();});
+bind(R, v=>{keys['arrowright']=keys['d']=v; if(!running&&!over) start();});
+bind(T, v=>{keys['arrowup']=keys['w']=v; if(!running&&!over) start();});
+
+/* ===== Rocks ===== */
+function spawnRocks(n=5){
+  for(let i=0;i<n;i++){
+    const r=rand(24,48), x=rand(0,W), y=rand(0,H);
+    const vx=rand(-60,60), vy=rand(-60,60), rot=rand(-1,1);
+    rocks.push({x,y,vx,vy,rot, a:rand(0,TAU), r, hp:Math.round(r/16)});
+  }
+}
+function splitRock(Rk){
+  const nr = Rk.r * 0.6;
+  if(nr < 18) return;
+  for(let i=0;i<2;i++){
+    rocks.push({x:Rk.x, y:Rk.y, vx:rand(-80,80), vy:rand(-80,80), rot:rand(-1,1), a:rand(0,TAU), r:nr, hp:Math.max(1,Math.round(nr/16))});
+  }
+}
+
+/* ===== Particles ===== */
+function puff(x,y,c='#7c9aff',n=10,s=120){for(let i=0;i<n;i++){const ang=rand(0,TAU), sp=rand(20,s);particles.push({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,t:rand(.4,.9),c})}}
+function updateParticles(dt){for(let i=particles.length-1;i>=0;i--){const p=particles[i]; p.t-=dt; if(p.t<=0){particles.splice(i,1); continue;} p.x+=p.vx*dt; p.y+=p.vy*dt; p.vx*=.98; p.vy*=.98; wrap(p);}}
+
+/* ===== Ship controls ===== */
+function shoot(){
+  if(ship.cooldown>0) return;
+  ship.cooldown=.2;
+  const sp=260, bx=ship.x+Math.cos(ship.a)*18, by=ship.y+Math.sin(ship.a)*18;
+  bullets.push({x:bx, y:by, vx:Math.cos(ship.a)*sp + ship.vx, vy:Math.sin(ship.a)*sp + ship.vy, t:1.8});
+  puff(bx,by,'#52e0c4',6,80);
+}
+
+/* ===== Game loop ===== */
+function loop(now){
+  if(!running) return requestAnimationFrame(loop);
+  const dt=Math.min(.033,(now-last)/1000); last=now; t+=dt;
+
+  // input
+  if(keys[' ']||keys['space']) shoot();
+  if(keys['ArrowLeft']||keys['a']) ship.a -= 3.2*dt;
+  if(keys['ArrowRight']||keys['d']) ship.a += 3.2*dt;
+  ship.thrust = (keys['ArrowUp']||keys['w']) ? 1 : 0;
+
+  // ship physics
+  if(ship.thrust){
+    ship.vx += Math.cos(ship.a)*180*dt;
+    ship.vy += Math.sin(ship.a)*180*dt;
+    puff(ship.x-Math.cos(ship.a)*14, ship.y-Math.sin(ship.a)*14, '#fca311', 2, 60);
+  }
+  ship.vx *= .995; ship.vy *= .995;
+  ship.x += ship.vx*dt; ship.y += ship.vy*dt; wrap(ship);
+  ship.cooldown=Math.max(0, ship.cooldown-dt);
+  ship.inv = Math.max(0, ship.inv - dt);
+
+  // bullets
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i]; b.t-=dt; if(b.t<=0){bullets.splice(i,1); continue;}
+    b.x+=b.vx*dt; b.y+=b.vy*dt; wrap(b);
+  }
+
+  // rocks
+  for(const r of rocks){ r.x+=r.vx*dt; r.y+=r.vy*dt; r.a+=r.rot*dt; wrap(r); }
+
+  // collisions: bullets vs rocks
+  for(let i=rocks.length-1;i>=0;i--){
+    const r=rocks[i];
+    for(let j=bullets.length-1;j>=0;j--){
+      const b=bullets[j];
+      if(len(b.x-r.x, b.y-r.y) < r.r){ bullets.splice(j,1); r.hp--; puff(b.x,b.y,'#7c9aff',8,140); if(r.hp<=0){ score+=Math.round(r.r); splitRock(r); rocks.splice(i,1); puff(r.x,r.y,'#52e0c4',18,200); } break; }
+    }
+  }
+
+  // collisions: ship vs rocks
+  if(ship.inv<=0){
+    for(const r of rocks){
+      if(len(ship.x-r.x, ship.y-r.y) < r.r+10){
+        lives--; ship.inv=2; ship.vx=ship.vy=0; puff(ship.x,ship.y,'#ff6b6b',24,180);
+        if(lives<=0){ end(); break; }
+      }
+    }
+  }
+
+  // drawing
+  X.clearRect(0,0,W,H);
+
+  // ship
+  X.save();
+  X.translate(ship.x, ship.y); X.rotate(ship.a);
+  X.globalAlpha = ship.inv>0 ? .4 : 1;
+  X.strokeStyle = '#52e0c4'; X.lineWidth = 2;
+  X.beginPath(); X.moveTo(16,0); X.lineTo(-12,-10); X.lineTo(-8,0); X.lineTo(-12,10); X.closePath(); X.stroke();
+  X.restore();
+
+  // bullets
+  X.fillStyle='#7c9aff';
+  for(const b of bullets){ X.fillRect(b.x-2,b.y-2,4,4); }
+
+  // rocks
+  X.strokeStyle='#e8eaf6'; X.lineWidth=2;
+  for(const r of rocks){
+    X.save(); X.translate(r.x,r.y); X.rotate(r.a);
+    X.beginPath();
+    const pts=8, rr=r.r;
+    for(let i=0;i<pts;i++){
+      const ang=i*(TAU/pts), rad=rr*rand(.8,1.1);
+      const px=Math.cos(ang)*rad, py=Math.sin(ang)*rad;
+      if(i===0) X.moveTo(px,py); else X.lineTo(px,py);
+    }
+    X.closePath(); X.stroke();
+    X.restore();
+  }
+
+  // particles
+  for(const p of particles){ X.globalAlpha=Math.max(0, p.t); X.fillStyle=p.c; X.fillRect(p.x,p.y,2,2); }
+  X.globalAlpha=1; updateParticles(dt);
+
+  // HUD
+  document.getElementById('score').textContent=String(score);
+  document.getElementById('lives').textContent=String(lives);
+
+  requestAnimationFrame(loop);
+}
+
+/* ===== Start / End / Restart ===== */
+const startEl=document.getElementById('start'), overEl=document.getElementById('over'), finalEl=document.getElementById('final');
+function start(){
+  if(running||over) return;
+  running=true; last=performance.now(); startEl.classList.add('hide');
+  rocks.length=0; bullets.length=0; particles.length=0; score=0; lives=3;
+  ship.x=W/2; ship.y=H/2; ship.vx=ship.vy=0; ship.a=-Math.PI/2; ship.inv=1.5;
+  spawnRocks(6);
+  requestAnimationFrame(loop);
+}
+function end(){ over=true; running=false; finalEl.textContent=String(score); overEl.classList.remove('hide'); }
+function restart(){ over=false; startEl.classList.add('hide'); overEl.classList.add('hide'); start(); }
+
+startEl.addEventListener('pointerdown', start);
+overEl.addEventListener('pointerdown', restart);
+
+/* Idle frame */ requestAnimationFrame(loop);
+</script>
+</body>
+</html>
