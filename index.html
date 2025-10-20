@@ -6,9 +6,80 @@
   <meta name="description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル. Official website coming soon." />
   <meta property="og:title" content="Chaker Group, Coming Soon" />
   <meta property="og:description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル." />
+  <!-- Bouton pour ouvrir le panneau jeux -->
+<button class="cg-games-toggle" aria-controls="cg-games" aria-expanded="false">
+  🎮 Try our mini-games
+</button>
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#0b0b0b" />
   <style>
+    /* ===== Toggle button ===== */
+.cg-games-toggle{
+  border:1px solid #ffffff20;
+  background: linear-gradient(180deg, var(--card), #0f1116);
+  color: var(--ink);
+  padding: 10px 14px; border-radius: 12px;
+  box-shadow: 0 10px 24px #0006, inset 0 1px 0 #ffffff15;
+  cursor: pointer;
+}
+.cg-games-toggle:hover{ transform: translateY(-1px); }
+
+/* ===== Drawer / Aside ===== */
+.cg-games{
+  position: fixed; top: 0; right: 0; height: 100vh; width: 420px;
+  max-width: 94vw;
+  background: linear-gradient(180deg, #0b0f18, #0a0d14);
+  border-left: 1px solid #ffffff22;
+  box-shadow: -24px 0 80px #00000080;
+  transform: translateX(100%); transition: transform .25s ease;
+  display: flex; flex-direction: column; z-index: 60;
+}
+.cg-games[aria-hidden="false"]{ transform: translateX(0); }
+
+.cg-games__head{
+  display:flex; align-items:center; gap:12px; padding:12px 12px 8px 12px;
+  border-bottom:1px solid #ffffff14; color: var(--ink);
+}
+.cg-close{
+  margin-left:auto; background:#ffffff12; border:1px solid #ffffff22; color:var(--ink);
+  border-radius:10px; padding:6px 10px; cursor:pointer;
+}
+.cg-tabs{ display:flex; gap:8px; }
+.cg-tabs button{
+  background:#ffffff10; border:1px solid #ffffff20; color:var(--ink);
+  padding:6px 10px; border-radius:10px; cursor:pointer; font-size:13px;
+}
+.cg-tabs button.is-active{
+  background: linear-gradient(180deg, var(--accent-2, #82a7ff), var(--accent, #7ff0d4));
+  color:#0b0b0b; border-color: transparent;
+}
+
+/* Body + iframes */
+.cg-games__body{ position:relative; flex:1; overflow:hidden; }
+.cg-frame{
+  position:absolute; inset:0; width:100%; height:100%; border:0; display:none;
+  background: radial-gradient(900px 600px at 15% 10%, #2a2f6d55 0%, transparent 60%),
+              radial-gradient(900px 600px at 85% 90%, #1bb1a555 0%, transparent 60%),
+              linear-gradient(135deg, #0f1020, #1b1e3c);
+}
+.cg-frame.is-active{ display:block; }
+
+/* Backdrop */
+.cg-games-backdrop{
+  position:fixed; inset:0; background:#0008; backdrop-filter: blur(2px);
+  z-index: 50;
+}
+
+/* ===== Mobile: bottom-sheet ===== */
+@media (max-width: 768px){
+  .cg-games{
+    width: 100%; height: 70vh; left:0; right:0; bottom:0; top:auto;
+    border-left:none; border-top:1px solid #ffffff22;
+    transform: translateY(100%);
+  }
+  .cg-games[aria-hidden="false"]{ transform: translateY(0); }
+}
+
     :root{
       --bg:#0b0b0b;
       --card:#121212;
@@ -85,5 +156,88 @@
     // set current year gracefully
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
+
+
+<!-- ===== Games Aside / Drawer ===== -->
+<aside id="cg-games" class="cg-games" aria-hidden="true">
+  <header class="cg-games__head">
+    <strong>Mini-Games</strong>
+    <div class="cg-tabs" role="tablist" aria-label="Select game">
+      <button role="tab" aria-selected="true" data-game="space" class="is-active">Space Shooter</button>
+      <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
+    </div>
+    <button class="cg-close" aria-label="Close games">✕</button>
+  </header>
+
+  <div class="cg-games__body">
+    <!-- Iframes lazy (chargées au 1er affichage) -->
+    <iframe
+      title="Space Shooter"
+      data-src="/games/space-shooter.html"
+      class="cg-frame is-active"
+      loading="lazy"
+      sandbox="allow-scripts allow-pointer-lock"
+      referrerpolicy="no-referrer"
+    ></iframe>
+
+    <iframe
+      title="Neon Runner"
+      data-src="/games/neon-runner.html"
+      class="cg-frame"
+      loading="lazy"
+      sandbox="allow-scripts allow-pointer-lock"
+      referrerpolicy="no-referrer"
+    ></iframe>
+  </div>
+</aside>
+<div class="cg-games-backdrop" hidden></div>
+
+  <script>
+(function(){
+  const drawer = document.getElementById('cg-games');
+  const backdrop = document.querySelector('.cg-games-backdrop');
+  const toggleBtn = document.querySelector('.cg-games-toggle');
+  const closeBtn = drawer.querySelector('.cg-close');
+  const tabs = drawer.querySelectorAll('.cg-tabs button');
+  const frames = drawer.querySelectorAll('.cg-frame');
+
+  function open(){
+    drawer.setAttribute('aria-hidden','false');
+    backdrop.hidden = false;
+    toggleBtn?.setAttribute('aria-expanded','true');
+    // lazy load visible frame
+    const active = drawer.querySelector('.cg-frame.is-active');
+    if(active && !active.src){ active.src = active.dataset.src; }
+  }
+  function close(){
+    drawer.setAttribute('aria-hidden','true');
+    backdrop.hidden = true;
+    toggleBtn?.setAttribute('aria-expanded','false');
+  }
+
+  toggleBtn?.addEventListener('click', ()=>{
+    const hidden = drawer.getAttribute('aria-hidden') !== 'false';
+    hidden ? open() : close();
+  });
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') close();
+  });
+
+  // Tabs switching
+  tabs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>{ b.classList.toggle('is-active', b===btn); b.setAttribute('aria-selected', b===btn); });
+      frames.forEach((f,i)=>{
+        const active = tabs[i]===btn;
+        f.classList.toggle('is-active', active);
+        if(active && !f.src){ f.src = f.dataset.src; } // lazy on activation
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
