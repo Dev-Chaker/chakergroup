@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -6,79 +7,76 @@
   <meta name="description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル. Official website coming soon." />
   <meta property="og:title" content="Chaker Group, Coming Soon" />
   <meta property="og:description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル." />
-  <!-- Bouton pour ouvrir le panneau jeux -->
-<button class="cg-games-toggle" aria-controls="cg-games" aria-expanded="false">
-  🎮 Try our mini-games
-</button>
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#0b0b0b" />
+
   <style>
     /* ===== Toggle button ===== */
-.cg-games-toggle{
-  border:1px solid #ffffff20;
-  background: linear-gradient(180deg, var(--card), #0f1116);
-  color: var(--ink);
-  padding: 10px 14px; border-radius: 12px;
-  box-shadow: 0 10px 24px #0006, inset 0 1px 0 #ffffff15;
-  cursor: pointer;
-}
-.cg-games-toggle:hover{ transform: translateY(-1px); }
+    .cg-games-toggle{
+      border:1px solid #ffffff20;
+      background: linear-gradient(180deg, var(--card), #0f1116);
+      color: var(--ink);
+      padding: 10px 14px; border-radius: 12px;
+      box-shadow: 0 10px 24px #0006, inset 0 1px 0 #ffffff15;
+      cursor: pointer;
+    }
+    .cg-games-toggle:hover{ transform: translateY(-1px); }
 
-/* ===== Drawer / Aside ===== */
-.cg-games{
-  position: fixed; top: 0; right: 0; height: 100vh; width: 420px;
-  max-width: 94vw;
-  background: linear-gradient(180deg, #0b0f18, #0a0d14);
-  border-left: 1px solid #ffffff22;
-  box-shadow: -24px 0 80px #00000080;
-  transform: translateX(100%); transition: transform .25s ease;
-  display: flex; flex-direction: column; z-index: 60;
-}
-.cg-games[aria-hidden="false"]{ transform: translateX(0); }
+    /* ===== Drawer / Aside ===== */
+    .cg-games{
+      position: fixed; top: 0; right: 0; height: 100vh; width: 420px;
+      max-width: 94vw;
+      background: linear-gradient(180deg, #0b0f18, #0a0d14);
+      border-left: 1px solid #ffffff22;
+      box-shadow: -24px 0 80px #00000080;
+      transform: translateX(100%); transition: transform .25s ease;
+      display: flex; flex-direction: column; z-index: 60;
+    }
+    .cg-games[aria-hidden="false"]{ transform: translateX(0); }
 
-.cg-games__head{
-  display:flex; align-items:center; gap:12px; padding:12px 12px 8px 12px;
-  border-bottom:1px solid #ffffff14; color: var(--ink);
-}
-.cg-close{
-  margin-left:auto; background:#ffffff12; border:1px solid #ffffff22; color:var(--ink);
-  border-radius:10px; padding:6px 10px; cursor:pointer;
-}
-.cg-tabs{ display:flex; gap:8px; }
-.cg-tabs button{
-  background:#ffffff10; border:1px solid #ffffff20; color:var(--ink);
-  padding:6px 10px; border-radius:10px; cursor:pointer; font-size:13px;
-}
-.cg-tabs button.is-active{
-  background: linear-gradient(180deg, var(--accent-2, #82a7ff), var(--accent, #7ff0d4));
-  color:#0b0b0b; border-color: transparent;
-}
+    .cg-games__head{
+      display:flex; align-items:center; gap:12px; padding:12px 12px 8px 12px;
+      border-bottom:1px solid #ffffff14; color: var(--ink);
+    }
+    .cg-close{
+      margin-left:auto; background:#ffffff12; border:1px solid #ffffff22; color:var(--ink);
+      border-radius:10px; padding:6px 10px; cursor:pointer;
+    }
+    .cg-tabs{ display:flex; gap:8px; }
+    .cg-tabs button{
+      background:#ffffff10; border:1px solid #ffffff20; color:var(--ink);
+      padding:6px 10px; border-radius:10px; cursor:pointer; font-size:13px;
+    }
+    .cg-tabs button.is-active{
+      background: linear-gradient(180deg, var(--accent-2, #82a7ff), var(--accent, #7ff0d4));
+      color:#0b0b0b; border-color: transparent;
+    }
 
-/* Body + iframes */
-.cg-games__body{ position:relative; flex:1; overflow:hidden; }
-.cg-frame{
-  position:absolute; inset:0; width:100%; height:100%; border:0; display:none;
-  background: radial-gradient(900px 600px at 15% 10%, #2a2f6d55 0%, transparent 60%),
-              radial-gradient(900px 600px at 85% 90%, #1bb1a555 0%, transparent 60%),
-              linear-gradient(135deg, #0f1020, #1b1e3c);
-}
-.cg-frame.is-active{ display:block; }
+    /* Body + iframes */
+    .cg-games__body{ position:relative; flex:1; overflow:hidden; }
+    .cg-frame{
+      position:absolute; inset:0; width:100%; height:100%; border:0; display:none;
+      background: radial-gradient(900px 600px at 15% 10%, #2a2f6d55 0%, transparent 60%),
+                  radial-gradient(900px 600px at 85% 90%, #1bb1a555 0%, transparent 60%),
+                  linear-gradient(135deg, #0f1020, #1b1e3c);
+    }
+    .cg-frame.is-active{ display:block; }
 
-/* Backdrop */
-.cg-games-backdrop{
-  position:fixed; inset:0; background:#0008; backdrop-filter: blur(2px);
-  z-index: 50;
-}
+    /* Backdrop */
+    .cg-games-backdrop{
+      position:fixed; inset:0; background:#0008; backdrop-filter: blur(2px);
+      z-index: 50;
+    }
 
-/* ===== Mobile: bottom-sheet ===== */
-@media (max-width: 768px){
-  .cg-games{
-    width: 100%; height: 70vh; left:0; right:0; bottom:0; top:auto;
-    border-left:none; border-top:1px solid #ffffff22;
-    transform: translateY(100%);
-  }
-  .cg-games[aria-hidden="false"]{ transform: translateY(0); }
-}
+    /* ===== Mobile: bottom-sheet ===== */
+    @media (max-width: 768px){
+      .cg-games{
+        width: 100%; height: 70vh; left:0; right:0; bottom:0; top:auto;
+        border-left:none; border-top:1px solid #ffffff22;
+        transform: translateY(100%);
+      }
+      .cg-games[aria-hidden="false"]{ transform: translateY(0); }
+    }
 
     :root{
       --bg:#0b0b0b;
@@ -100,11 +98,11 @@
     }
     .wrap{max-width:980px; width:100%;}
     header{display:flex; align-items:center; gap:14px; margin-bottom:32px;}
-    .mark{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 10px 30px rgba(127,240,212,.25), 0 8px 24px rgba(138,167,255,.2);}    
+    .mark{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 10px 30px rgba(127,240,212,.25), 0 8px 24px rgba(138,167,255,.2);}
     .mark svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));}
     .brand{font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); opacity:.9}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)); border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:38px; box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);}    
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)); border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:38px; box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);}
 
     h1{font-family: ui-serif, "Georgia", Cambria, "Times New Roman", Times, serif; font-weight:600; font-size:clamp(36px, 6vw, 56px); line-height:1.08; margin:0 0 10px; letter-spacing:.01em;}
     .eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);}
@@ -129,6 +127,7 @@
     footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px}
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -146,7 +145,11 @@
       <div class="eyebrow">Coming Soon</div>
       <h1>ChakerGroup</h1>
       <p class="lead">A boutique venture by <strong>ヤナ</strong> &amp; <strong>ハムザ・シャケル.</strong> - built on clarity, taste, and uncompromising standards. The full experience launches soon.</p>
-      
+
+      <!-- 👉 Bouton placé DANS le body (visible et valide) -->
+      <button class="cg-games-toggle" aria-controls="cg-games" aria-expanded="false">
+        🎮 Try our mini-games
+      </button>
     </section>
 
     <footer>© <span id="y"></span> ChakerGroup. All rights reserved.</footer>
@@ -157,85 +160,87 @@
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 
+  <!-- ===== Games Aside / Drawer ===== -->
+  <aside id="cg-games" class="cg-games" aria-hidden="true">
+    <header class="cg-games__head">
+      <strong>Mini-Games</strong>
+      <div class="cg-tabs" role="tablist" aria-label="Select game">
+        <button role="tab" aria-selected="true" data-game="space" class="is-active">Space Shooter</button>
+        <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
+      </div>
+      <button class="cg-close" aria-label="Close games">✕</button>
+    </header>
 
-<!-- ===== Games Aside / Drawer ===== -->
-<aside id="cg-games" class="cg-games" aria-hidden="true">
-  <header class="cg-games__head">
-    <strong>Mini-Games</strong>
-    <div class="cg-tabs" role="tablist" aria-label="Select game">
-      <button role="tab" aria-selected="true" data-game="space" class="is-active">Space Shooter</button>
-      <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
+    <div class="cg-games__body">
+      <!-- Iframes lazy (chargées au 1er affichage) -->
+      <iframe
+        title="Space Shooter"
+        data-src="games/space-shooter.html"
+        class="cg-frame is-active"
+        loading="lazy"
+        sandbox="allow-scripts allow-pointer-lock"
+        referrerpolicy="no-referrer"
+      ></iframe>
+
+      <iframe
+        title="Neon Runner"
+        data-src="games/neon-runner.html"
+        class="cg-frame"
+        loading="lazy"
+        sandbox="allow-scripts allow-pointer-lock"
+        referrerpolicy="no-referrer"
+      ></iframe>
     </div>
-    <button class="cg-close" aria-label="Close games">✕</button>
-  </header>
+  </aside>
+  <div class="cg-games-backdrop" hidden></div>
 
-  <div class="cg-games__body">
-    <!-- Iframes lazy (chargées au 1er affichage) -->
-    <iframe
-  title="Space Shooter"
-  data-src="games/space-shooter.html"
-  class="cg-frame is-active"
-  loading="lazy"
-  sandbox="allow-scripts allow-pointer-lock"
-  referrerpolicy="no-referrer"
-></iframe>
-
-<iframe
-  title="Neon Runner"
-  data-src="games/neon-runner.html"
-  class="cg-frame"
-  loading="lazy"
-  sandbox="allow-scripts allow-pointer-lock"
-  referrerpolicy="no-referrer"
-></iframe>
-
-
+  <!-- === SCRIPT DU PANNEAU JEUX (à la fin, avant </body>) === -->
   <script>
-(function(){
-  const drawer = document.getElementById('cg-games');
-  const backdrop = document.querySelector('.cg-games-backdrop');
-  const toggleBtn = document.querySelector('.cg-games-toggle');
-  const closeBtn = drawer.querySelector('.cg-close');
-  const tabs = drawer.querySelectorAll('.cg-tabs button');
-  const frames = drawer.querySelectorAll('.cg-frame');
+  (function(){
+    const drawer = document.getElementById('cg-games');
+    const backdrop = document.querySelector('.cg-games-backdrop');
+    const toggleBtn = document.querySelector('.cg-games-toggle');
+    const closeBtn = drawer.querySelector('.cg-close');
+    const tabs = drawer.querySelectorAll('.cg-tabs button');
+    const frames = drawer.querySelectorAll('.cg-frame');
 
-  function open(){
-    drawer.setAttribute('aria-hidden','false');
-    backdrop.hidden = false;
-    toggleBtn?.setAttribute('aria-expanded','true');
-    // lazy load visible frame
-    const active = drawer.querySelector('.cg-frame.is-active');
-    if(active && !active.src){ active.src = active.dataset.src; }
-  }
-  function close(){
-    drawer.setAttribute('aria-hidden','true');
-    backdrop.hidden = true;
-    toggleBtn?.setAttribute('aria-expanded','false');
-  }
+    function open(){
+      drawer.setAttribute('aria-hidden','false');
+      backdrop.hidden = false;
+      toggleBtn?.setAttribute('aria-expanded','true');
+      // lazy load visible frame
+      const active = drawer.querySelector('.cg-frame.is-active');
+      if(active && !active.src){ active.src = active.dataset.src; }
+    }
+    function close(){
+      drawer.setAttribute('aria-hidden','true');
+      backdrop.hidden = true;
+      toggleBtn?.setAttribute('aria-expanded','false');
+    }
 
-  toggleBtn?.addEventListener('click', ()=>{
-    const hidden = drawer.getAttribute('aria-hidden') !== 'false';
-    hidden ? open() : close();
-  });
-  closeBtn.addEventListener('click', close);
-  backdrop.addEventListener('click', close);
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape') close();
-  });
+    toggleBtn?.addEventListener('click', ()=>{
+      const hidden = drawer.getAttribute('aria-hidden') !== 'false';
+      hidden ? open() : close();
+    });
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') close();
+    });
 
-  // Tabs switching
-  tabs.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      tabs.forEach(b=>{ b.classList.toggle('is-active', b===btn); b.setAttribute('aria-selected', b===btn); });
-      frames.forEach((f,i)=>{
-        const active = tabs[i]===btn;
-        f.classList.toggle('is-active', active);
-        if(active && !f.src){ f.src = f.dataset.src; } // lazy on activation
+    // Tabs switching
+    tabs.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        tabs.forEach(b=>{ b.classList.toggle('is-active', b===btn); b.setAttribute('aria-selected', b===btn); });
+        frames.forEach((f,i)=>{
+          const active = tabs[i]===btn;
+          f.classList.toggle('is-active', active);
+          if(active && !f.src){ f.src = f.dataset.src; } // lazy on activation
+        });
       });
     });
-  });
-})();
-</script>
-
+  })();
+  </script>
 </body>
 </html>
+
