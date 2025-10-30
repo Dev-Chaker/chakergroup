@@ -1,359 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chaker Group — Coming Soon</title>
-  <meta name="description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル. Official website coming soon." />
-  <meta property="og:title" content="Chaker Group, Coming Soon" />
-  <meta property="og:description" content="ChakerGroup, Founders: ヤナ＆ハムザ・シャケル." />
-  <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#0b0b0b" />
-
-  <style>
-    /* ===== Toggle button ===== */
-    .cg-games-toggle{
-      border:1px solid #ffffff20;
-      background: linear-gradient(180deg, var(--card), #0f1116);
-      color: var(--ink);
-      padding: 10px 14px; border-radius: 12px;
-      box-shadow: 0 10px 24px #0006, inset 0 1px 0 #ffffff15;
-      cursor: pointer;
-    }
-    .cg-games-toggle:hover{ transform: translateY(-1px); }
-
-    /* ===== Drawer / Aside ===== */
-    .cg-games{
-      position: fixed; top: 0; right: 0; height: 100vh; width: 420px;
-      max-width: 94vw;
-      background: linear-gradient(180deg, #0b0f18, #0a0d14);
-      border-left: 1px solid #ffffff22;
-      box-shadow: -24px 0 80px #00000080;
-      transform: translateX(100%); transition: transform .25s ease;
-      display: flex; flex-direction: column; z-index: 60;
-    }
-    .cg-games[aria-hidden="false"]{ transform: translateX(0); }
-
-    .cg-games__head{
-      display:flex; align-items:center; gap:12px; padding:12px 12px 8px 12px;
-      border-bottom:1px solid #ffffff14; color: var(--ink);
-    }
-    .cg-close{
-      margin-left:auto; background:#ffffff12; border:1px solid #ffffff22; color:var(--ink);
-      border-radius:10px; padding:6px 10px; cursor:pointer;
-    }
-    .cg-tabs{ display:flex; gap:8px; }
-    .cg-tabs button{
-      background:#ffffff10; border:1px solid #ffffff20; color:var(--ink);
-      padding:6px 10px; border-radius:10px; cursor:pointer; font-size:13px;
-    }
-    .cg-tabs button.is-active{
-      background: linear-gradient(180deg, var(--accent-2, #82a7ff), var(--accent, #7ff0d4));
-      color:#0b0b0b; border-color: transparent;
-    }
-
-    /* Body + iframes */
-    .cg-games__body{ position:relative; flex:1; overflow:hidden; }
-    .cg-frame{
-      position:absolute; inset:0; width:100%; height:100%; border:0; display:none;
-      background: radial-gradient(900px 600px at 15% 10%, #2a2f6d55 0%, transparent 60%),
-                  radial-gradient(900px 600px at 85% 90%, #1bb1a555 0%, transparent 60%),
-                  linear-gradient(135deg, #0f1020, #1b1e3c);
-    }
-    .cg-frame.is-active{ display:block; }
-
-    /* Backdrop */
-    .cg-games-backdrop{
-      position:fixed; inset:0; background:#0008; backdrop-filter: blur(2px);
-      z-index: 50;
-    }
-
-    /* ===== Mobile: bottom-sheet ===== */
-    @media (max-width: 768px){
-      .cg-games{
-        width: 100%; height: 70vh; left:0; right:0; bottom:0; top:auto;
-        border-left:none; border-top:1px solid #ffffff22;
-        transform: translateY(100%);
-      }
-      .cg-games[aria-hidden="false"]{ transform: translateY(0); }
-    }
-
-    :root{
-      --bg:#0b0b0b;
-      --card:#121212;
-      --ink:#eaeaea;
-      --muted:#b6b6b6;
-      --accent:#7ff0d4;
-      --accent-2:#8aa7ff;
-      --ring:rgba(127,240,212,.25);
-    }
-    html,body{height:100vh; height:100dvh; margin:0; overflow:hidden;}
-    body{
-      margin:0; background:radial-gradient(1200px 800px at 80% -10%, rgba(138,167,255,.18), transparent),
-                 radial-gradient(1200px 800px at -10% 110%, rgba(127,240,212,.14), transparent),
-                 var(--bg);
-      color:var(--ink);
-      font:400 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      display:grid; place-items:center; padding:48px 20px;
-    }
-    .wrap{max-width:980px; width:100%;}
-    header{display:flex; align-items:center; gap:14px; margin-bottom:32px;}
-    .mark{width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 10px 30px rgba(127,240,212,.25), 0 8px 24px rgba(138,167,255,.2);}
-    .mark svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));}
-    .brand{font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); opacity:.9}
-
-    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)); border:1px solid rgba(255,255,255,.06); border-radius:20px; padding:38px; box-shadow:0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);}
-
-    h1{font-family: ui-serif, "Georgia", Cambria, "Times New Roman", Times, serif; font-weight:600; font-size:clamp(36px, 6vw, 56px); line-height:1.08; margin:0 0 10px; letter-spacing:.01em;}
-    .eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);}
-    .eyebrow::before{content:""; width:28px; height:1px; background:linear-gradient(90deg, transparent, var(--muted)); opacity:.6}
-
-    p.lead{font-size:clamp(16px, 2.6vw, 20px); color:#d9d9d9; margin:10px 0 26px}
-
-    .founders{display:grid; grid-template-columns:1fr; gap:18px; margin-top:26px}
-    .founders .row{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
-    .chip{border:1px solid rgba(255,255,255,.12); padding:10px 14px; border-radius:999px; backdrop-filter:saturate(140%) blur(2px); background:rgba(255,255,255,.03)}
-    .names{font-weight:600}
-
-    .meta{
-      display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-top:24px; color:var(--muted);
-    }
-    .meta a{color:var(--ink); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.25)}
-    .meta a:hover{color:var(--accent)}
-
-    .cta{display:inline-flex; align-items:center; gap:10px; margin-top:6px; padding:12px 18px; border-radius:14px; text-decoration:none; color:#0b0b0b; font-weight:600; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 10px 24px var(--ring);}
-    .cta:hover{transform:translateY(-1px)}
-
-    footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px}
-  /* Dock button */
-.cg-dock{
-  margin-left:8px;
-  background:#ffffff12;
-  border:1px solid #ffffff22;
-  color:var(--ink);
-  border-radius:10px;
-  padding:6px 10px;
-  cursor:pointer;
-}
-
-/* Default (Right) already exists via .cg-games styles */
-
-/* Bottom mode (70% height) */
-.cg-games.is-bottom{
-  width:100%;
-  height:70vh;             /* fallback */
-  height:70dvh;            /* iOS/modern */
-  left:0; right:0; bottom:0; top:auto;
-  border-left:none; border-top:1px solid #ffffff22;
-  transform: translateY(100%);
-}
-.cg-games.is-bottom[aria-hidden="false"]{ transform: translateY(0); }
-
-/* Full-screen mode */
-.cg-games.is-full{
-  width:100%;
-  height:100vh;            /* fallback */
-  height:100dvh;           /* iOS/modern */
-  left:0; right:0; top:0; bottom:0;
-  border:none; border-radius:0;
-  transform: translateY(100%);
-}
-.cg-games.is-full[aria-hidden="false"]{ transform: translateY(0); }
-/* ——— DOCK MODES (override) ——— */
-
-/* Full-screen mode: override width cap, fill viewport, override transform axis */
-.cg-games.is-full{
-  position: fixed;
-  inset: 0;                  /* top:0 right:0 bottom:0 left:0 */
-  width: 100vw;
-  height: 100vh;             /* fallback */
-  height: 100dvh;            /* modern mobile (iOS/Android) */
-  max-width: none;           /* override the 94vw cap */
-  max-height: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  transform: translateY(100%);   /* hidden state slides vertically */
-}
-.cg-games.is-full[aria-hidden="false"]{
-  transform: translateY(0);
-}
-
-/* Bottom (sheet) mode: make sure we remove width cap too */
-.cg-games.is-bottom{
-  position: fixed;
-  left: 0; right: 0; bottom: 0; top: auto;
-  width: 100vw;
-  height: 70vh;              /* fallback */
-  height: 70dvh;             /* modern mobile */
-  max-width: none;
-  border-left: none;
-  border-top: 1px solid #ffffff22;
-  transform: translateY(100%);
-}
-.cg-games.is-bottom[aria-hidden="false"]{
-  transform: translateY(0);
-}
-
-/* Ensure the base right-drawer transform doesn't override full/bottom modes */
-.cg-games.is-full[aria-hidden="false"],
-.cg-games.is-bottom[aria-hidden="false"]{
-  will-change: transform;
-}
-
-
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CHAKER Group | シャケル・グループ</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: #0B1220;
+    color: #FFFFFF;
+  }
+  header {
+    text-align: center;
+    padding: 60px 20px 20px;
+  }
+  header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    color: #C7AB77;
+  }
+  header p.jp {
+    font-size: 1.2rem;
+    color: #C9CED6;
+  }
+  .hero {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(180deg, rgba(12,22,38,0.9) 0%, rgba(12,22,38,1) 100%), url('https://images.unsplash.com/photo-1513343041531-1639d8b9b6fc?auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    background-position: center;
+  }
+  .hero h2 {
+    font-size: 2rem;
+    margin: 0;
+    color: #FFFFFF;
+  }
+  .hero p {
+    margin-top: 20px;
+    color: #C9CED6;
+  }
+  .divisions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 40px;
+    padding: 100px 10%;
+    background-color: #0B1220;
+  }
+  .division {
+    background-color: #111827;
+    border: 1px solid #1F2937;
+    border-radius: 16px;
+    padding: 40px;
+    transition: all 0.3s ease;
+  }
+  .division:hover {
+    background-color: #161F2D;
+    transform: translateY(-4px);
+  }
+  .division h3 {
+    color: #C7AB77;
+    margin-top: 0;
+  }
+  .division p {
+    color: #C9CED6;
+  }
+  .philosophy {
+    text-align: center;
+    padding: 100px 10%;
+    background-color: #0C1626;
+  }
+  .philosophy h2 {
+    color: #C7AB77;
+    margin-bottom: 20px;
+  }
+  .philosophy p {
+    color: #C9CED6;
+    line-height: 1.8;
+  }
+  footer {
+    text-align: center;
+    padding: 40px;
+    background-color: #0B1220;
+    font-size: 0.9rem;
+    color: #C9CED6;
+  }
+</style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header>
-      <div class="mark" aria-hidden="true">
-        <!-- stylized CG monogram -->
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 12a8 8 0 1 1 8 8" stroke="#0b0b0b" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M20 12a8 8 0 0 1-8 8" stroke="#0b0b0b" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand">ChakerGroup</div>
-    </header>
-
-    <section class="card">
-      <div class="eyebrow">Coming Soon</div>
-      <h1>ChakerGroup</h1>
-      <p class="lead">A boutique venture by <strong>ヤナ</strong> &amp; <strong>ハムザ・シャケル.</strong> - built on clarity, taste, and uncompromising standards. The full experience launches soon.</p>
-
-      <!-- 👉 Bouton placé DANS le body (visible et valide) -->
-      <button class="cg-games-toggle" aria-controls="cg-games" aria-expanded="false">
-        🎮 Try our mini-games
-      </button>
-    </section>
-
-    <footer>© <span id="y"></span> ChakerGroup. All rights reserved.</footer>
-  </div>
-
-  <script>
-    // set current year gracefully
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
-
-  <!-- ===== Games Aside / Drawer ===== -->
-  <aside id="cg-games" class="cg-games" aria-hidden="true">
-    <header class="cg-games__head">
-  <strong>Mini-Games</strong>
-
-  <div class="cg-tabs" role="tablist" aria-label="Select game">
-    <button role="tab" aria-selected="true"  data-game="space"     class="is-active">Space Shooter</button>
-    <button role="tab" aria-selected="false" data-game="racer">Neon Runner</button>
-    <button role="tab" aria-selected="false" data-game="asteroids">Asteroids</button>
-  </div>
-
-  <!-- Nouveau : bouton Dock -->
-<button class="cg-dock" aria-label="Dock position">Dock: Right</button>
-
-  <button class="cg-close" aria-label="Close games">✕</button>
-</header>
-
-
-    <div class="cg-games__body">
-      <!-- Iframes lazy (chargées au 1er affichage) -->
-      <iframe
-        title="Space Shooter"
-        data-src="games/space-shooter.html"
-        class="cg-frame is-active"
-        loading="lazy"
-        sandbox="allow-scripts allow-pointer-lock"
-        referrerpolicy="no-referrer"
-      ></iframe>
-
-      <iframe
-        title="Neon Runner"
-        data-src="games/neon-runner.html"
-        class="cg-frame"
-        loading="lazy"
-        sandbox="allow-scripts allow-pointer-lock"
-        referrerpolicy="no-referrer"
-      ></iframe>
-      <iframe
-  title="Asteroids"
-  data-src="games/asteroids-lite.html"
-  class="cg-frame"
-  loading="lazy"
-  sandbox="allow-scripts allow-pointer-lock"
-  referrerpolicy="no-referrer"
-></iframe>
-
+  <header>
+    <h1>CHAKER Group</h1>
+    <p class="jp">シャケル・グループ</p>
+  </header>
+  <section class="hero">
+    <h2>Designed in Japan. Built for the World.</h2>
+    <p>日本で生まれ、世界を導く。<br>Innovating through Technology, Design, and Human Excellence.</p>
+  </section>
+  <section class="divisions">
+    <div class="division">
+      <h3>CHAKER Technologies Japan</h3>
+      <p>AI, Automation, and Software Excellence<br>人工知能、オートメーション、ソフトウェア開発</p>
     </div>
-  </aside>
-  <div class="cg-games-backdrop" hidden></div>
-
-  <!-- === SCRIPT DU PANNEAU JEUX (à la fin, avant </body>) === -->
-  <script>
-(function(){
-  const drawer   = document.getElementById('cg-games');
-  const backdrop = document.querySelector('.cg-games-backdrop');
-  const toggleBtn= document.querySelector('.cg-games-toggle');
-  const closeBtn = drawer.querySelector('.cg-close');
-  const dockBtn  = drawer.querySelector('.cg-dock');
-  const tabs     = Array.from(drawer.querySelectorAll('.cg-tabs button'));
-  const frames   = Array.from(drawer.querySelectorAll('.cg-frame'));
-
-  // ---- Dock preference (cycle Right -> Bottom -> Full) ----
-  const order = ['right','bottom','full'];
-  let mode = localStorage.getItem('cgDock') || 'right';
-
-  function applyMode(){
-    drawer.classList.toggle('is-bottom', mode==='bottom');
-    drawer.classList.toggle('is-full',   mode==='full');
-    dockBtn.textContent = 'Dock: ' + (mode[0].toUpperCase()+mode.slice(1));
-    localStorage.setItem('cgDock', mode);
-  }
-  applyMode();
-
-  dockBtn.addEventListener('click', ()=>{
-    const idx = order.indexOf(mode);
-    mode = order[(idx+1)%order.length];
-    applyMode();
-  });
-
-  // ---- Open / Close ----
-  function open(){
-    drawer.setAttribute('aria-hidden','false');
-    backdrop.hidden = false;
-    toggleBtn?.setAttribute('aria-expanded','true');
-    const active = drawer.querySelector('.cg-frame.is-active');
-    if(active && !active.src){ active.src = active.dataset.src; }
-  }
-  function close(){
-    drawer.setAttribute('aria-hidden','true');
-    backdrop.hidden = true;
-    toggleBtn?.setAttribute('aria-expanded','false');
-  }
-
-  toggleBtn?.addEventListener('click', ()=>{
-    const hidden = drawer.getAttribute('aria-hidden') !== 'false';
-    hidden ? open() : close();
-  });
-  closeBtn.addEventListener('click', close);
-  backdrop.addEventListener('click', close);
-  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close(); });
-
-  // ---- Tabs switching ----
-  tabs.forEach((btn, idx)=>{
-    btn.addEventListener('click', ()=>{
-      tabs.forEach((b,i)=>{
-        const active = i===idx;
-        b.classList.toggle('is-active', active);
-        b.setAttribute('aria-selected', String(active));
-        frames[i].classList.toggle('is-active', active);
-        if(active && !frames[i].src){ frames[i].src = frames[i].dataset.src; }
-      });
-    });
-  });
-})();
-</script>
-
-
+    <div class="division">
+      <h3>CHAKER Digital</h3>
+      <p>Marketing, E-commerce & Branding<br>マーケティング・Eコマース・ブランド戦略</p>
+    </div>
+    <div class="division">
+      <h3>CHAKER Labs</h3>
+      <p>AI Research & Innovation<br>人工知能研究とイノベーション</p>
+    </div>
+    <div class="division">
+      <h3>CHAKER Studios</h3>
+      <p>Mobile Games & Creative Projects<br>モバイルゲームとクリエイティブプロジェクト</p>
+    </div>
+  </section>
+  <section class="philosophy">
+    <h2>Our Philosophy / 私たちの理念</h2>
+    <p>
+      CHAKER Group creates a bridge between technology and humanity.<br>
+      Rooted in Japanese precision and global ambition, our mission is to design intelligent experiences that inspire, empower, and connect people across the world.<br>
+      シャケル・グループは、テクノロジーと人間性の架け橋を築きます。日本の精密さと世界的なビジョンを融合し、人々を鼓舞し、力を与え、つなぐ知的体験を創造します。
+    </p>
+  </section>
+  <footer>
+    © 2025 CHAKER Group | シャケル・グループ — Designed in Japan. Built for the World.
+  </footer>
 </body>
-</html>
-
+</html> 
