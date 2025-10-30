@@ -4,131 +4,218 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CHAKER Group | シャケル・グループ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin: 0;
-    font-family: 'Inter', 'Noto Sans JP', sans-serif;
-    background-color: #0B1220;
-    color: #FFFFFF;
+  :root{
+    --ink:#0B1220;      /* deep blue-black */
+    --silver:#C9CED6;   /* platinum */
+    --steel:#AEB4C1;    /* soft steel */
+    --glass:rgba(255,255,255,.06);
+    --glass-border:rgba(255,255,255,.1);
+    --white:#FFFFFF;
   }
-  header {
-    text-align: center;
-    padding: 60px 20px 20px;
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ink); color:var(--white);
+    font-family:'Outfit','Noto Sans JP',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   }
-  header h1 {
-    font-size: 2.6rem;
-    letter-spacing: 3px;
-    color: #C9CED6;
+  header{
+    position:sticky; top:0; z-index:10;
+    backdrop-filter:saturate(120%) blur(8px);
+    background:linear-gradient(180deg, rgba(11,18,32,.85), rgba(11,18,32,.55));
+    border-bottom:1px solid var(--glass-border);
+    padding:18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
   }
-  header p.jp {
-    font-size: 1.2rem;
-    color: #AEB4C1;
+  .brand{ text-align:left }
+  .brand h1{ font-family:'Cormorant Garamond',serif; margin:0; font-size:28px; letter-spacing:3px; color:var(--silver); font-weight:600 }
+  .brand .jp{ margin:2px 0 0; font-size:12px; color:var(--steel); letter-spacing:1px }
+  .lang{
+    display:flex; gap:10px; align-items:center;
   }
-  .hero {
-    text-align: center;
-    padding: 100px 20px;
-    background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.05) 0%, rgba(11,18,32,1) 70%);
+  .lang button{
+    appearance:none; border:1px solid var(--glass-border); background:var(--glass); color:var(--silver);
+    padding:8px 12px; border-radius:10px; font-size:12px; letter-spacing:.5px; cursor:pointer;
+    transition:.2s ease; backdrop-filter:blur(6px);
   }
-  .hero h2 {
-    font-size: 2.2rem;
-    margin: 0;
-    color: #FFFFFF;
+  .lang button:hover{ transform:translateY(-1px); border-color:var(--steel) }
+  .lang button.active{ background:var(--white); color:var(--ink); border-color:transparent; }
+
+  .hero{ text-align:center; padding:90px 20px; background:radial-gradient(circle at 50% 15%, rgba(255,255,255,.05) 0%, rgba(11,18,32,1) 65%); }
+  .hero h2{ margin:0; font-size:34px; font-weight:600 }
+  .hero p{ margin-top:16px; color:var(--silver); font-size:16px }
+
+  .divisions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:34px; padding:80px 8% }
+  .division{
+    background:var(--glass); border:1px solid var(--glass-border); border-radius:20px; padding:34px 28px;
+    backdrop-filter:blur(10px); box-shadow:0 8px 20px rgba(0,0,0,.35); transition:.25s ease;
   }
-  .hero p {
-    margin-top: 20px;
-    color: #C9CED6;
-    font-size: 1.1rem;
-  }
-  .divisions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
-    padding: 100px 10%;
-    background-color: #0B1220;
-  }
-  .division {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 45px 35px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    transition: all 0.3s ease;
-  }
-  .division:hover {
-    background: rgba(255,255,255,0.08);
-    transform: translateY(-6px);
-  }
-  .division h3 {
-    color: #C9CED6;
-    font-size: 1.3rem;
-    margin-bottom: 12px;
-  }
-  .division p {
-    color: #AEB4C1;
-    line-height: 1.6;
-    font-size: 1rem;
-  }
-  .philosophy {
-    text-align: center;
-    padding: 120px 10%;
-    background-color: #0C1626;
-  }
-  .philosophy h2 {
-    color: #C9CED6;
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-  }
-  .philosophy p {
-    color: #AEB4C1;
-    line-height: 1.8;
-    font-size: 1.05rem;
-  }
-  footer {
-    text-align: center;
-    padding: 50px 20px;
-    background-color: #0B1220;
-    font-size: 0.95rem;
-    color: #AEB4C1;
-  }
+  .division:hover{ transform:translateY(-4px); background:rgba(255,255,255,.09) }
+  .division h3{ margin:0 0 8px; color:var(--silver); font-weight:600; letter-spacing:.5px }
+  .division p{ margin:0; color:var(--steel); line-height:1.7 }
+
+  .philosophy{ text-align:center; padding:96px 10%; background:#0C1626; border-top:1px solid var(--glass-border) }
+  .philosophy h2{ color:var(--silver); margin:0 0 12px; font-weight:600 }
+  .philosophy p{ color:var(--steel); line-height:1.9 }
+
+  footer{ text-align:center; padding:40px 20px; color:var(--steel); border-top:1px solid var(--glass-border) }
+
+  /* Language visibility */
+  [data-langblock]{ display:none }
+  [data-langblock][data-visible="true"]{ display:block }
 </style>
 </head>
 <body>
   <header>
-    <h1>CHAKER Group</h1>
-    <p class="jp">シャケル・グループ</p>
+    <div class="brand">
+      <h1>CHAKER Group</h1>
+      <div class="jp">シャケル・グループ</div>
+    </div>
+    <div class="lang" aria-label="Language selector">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="ja">日本語</button>
+      <button data-lang="fr">FR</button>
+      <button data-lang="ru">RU</button>
+    </div>
   </header>
-  <section class="hero">
-    <h2>Designed in Japan. Built for the World.</h2>
-    <p>日本で設計し、世界のために創造する。<br>Precision, Serenity, and Innovation for the Next Era.</p>
-  </section>
-  <section class="divisions">
-    <div class="division">
-      <h3>CHAKER Technologies Japan</h3>
-      <p>Core innovation hub of the Group. Specializes in AI systems, automation, and next-generation software architecture.<br><br>グループの中核を担うテクノロジー部門。AIシステム、オートメーション、次世代ソフトウェアアーキテクチャを専門としています。</p>
-    </div>
-    <div class="division">
-      <h3>CHAKER Digital</h3>
-      <p>Building brands and global e-commerce ecosystems. Merging data, psychology, and storytelling to scale modern businesses.<br><br>データ、心理学、ストーリーテリングを融合し、ブランドとEコマースのエコシステムを構築します。</p>
-    </div>
-    <div class="division">
-      <h3>CHAKER Labs</h3>
-      <p>Experimental division dedicated to artificial intelligence, human-computer relations, and advanced automation prototypes.<br><br>人工知能、人間とコンピュータの関係、そして先進的な自動化プロトタイプの研究開発に特化しています。</p>
-    </div>
-    <div class="division">
-      <h3>CHAKER Studios</h3>
-      <p>Where creativity meets technology. Developing immersive mobile games and visual experiences inspired by Japanese aesthetics.<br><br>創造性とテクノロジーが融合する場所。日本美学にインスパイアされた没入型モバイルゲームとビジュアル体験を開発します。</p>
-    </div>
-  </section>
-  <section class="philosophy">
-    <h2>Our Philosophy / 私たちの理念</h2>
-    <p>
-      CHAKER Group creates harmony between precision and emotion, technology and humanity. We believe in long-term excellence built through calm focus, innovation, and integrity.<br><br>
-      シャケル・グループは、精密さと感情、テクノロジーと人間性の調和を追求します。冷静な集中力、革新、そして誠実さを通じて長期的な卓越性を築くことを信じています。
-    </p>
-  </section>
+
+  <!-- EN -->
+  <main id="lang-en" data-langblock data-visible="true">
+    <section class="hero">
+      <h2>Designed in Japan. Built for the World.</h2>
+      <p>Precision, serenity, and innovation for the next era.</p>
+    </section>
+    <section class="divisions">
+      <div class="division">
+        <h3>CHAKER Technologies Japan</h3>
+        <p>Core innovation hub of the Group. Specializes in AI systems, automation, and next‑generation software architecture.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Digital</h3>
+        <p>Building brands and global e‑commerce ecosystems. Merging data, psychology, and storytelling to scale modern businesses.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Labs</h3>
+        <p>Experimental division dedicated to artificial intelligence, human‑computer relations, and advanced automation prototypes.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Studios</h3>
+        <p>Where creativity meets technology. Developing immersive mobile games and visual experiences inspired by Japanese aesthetics.</p>
+      </div>
+    </section>
+    <section class="philosophy">
+      <h2>Our Philosophy</h2>
+      <p>CHAKER Group creates harmony between precision and emotion, technology and humanity. We believe in long‑term excellence built through calm focus, innovation, and integrity.</p>
+    </section>
+  </main>
+
+  <!-- JP -->
+  <main id="lang-ja" data-langblock>
+    <section class="hero">
+      <h2>日本で設計し、世界のために創造する。</h2>
+      <p>次の時代のための精密さ、静けさ、そしてイノベーション。</p>
+    </section>
+    <section class="divisions">
+      <div class="division">
+        <h3>CHAKER テクノロジーズ・ジャパン</h3>
+        <p>グループの中核を担うイノベーション拠点。AI システム、オートメーション、次世代ソフトウェアのアーキテクチャに特化。</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER デジタル</h3>
+        <p>ブランドとグローバル E コマースのエコシステムを構築。データ、心理学、ストーリーテリングを統合して成長を加速。</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER ラボ</h3>
+        <p>人工知能、人間とコンピュータの関係、先進的な自動化プロトタイプに取り組む実験的部門。</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER スタジオ</h3>
+        <p>創造性とテクノロジーの交差点。日本の美学に着想を得た没入型モバイルゲームとビジュアル体験を開発。</p>
+      </div>
+    </section>
+    <section class="philosophy">
+      <h2>私たちの理念</h2>
+      <p>シャケル・グループは、精密さと感性、テクノロジーと人間性の調和を目指します。静かな集中、革新、誠実さによって長期的な卓越性を築きます。</p>
+    </section>
+  </main>
+
+  <!-- FR -->
+  <main id="lang-fr" data-langblock>
+    <section class="hero">
+      <h2>Conçu au Japon. Créé pour le monde.</h2>
+      <p>Précision, sérénité et innovation pour la prochaine ère.</p>
+    </section>
+    <section class="divisions">
+      <div class="division">
+        <h3>CHAKER Technologies Japan</h3>
+        <p>Le hub d'innovation du Groupe. Spécialisé en systèmes d’IA, automatisation et architectures logicielles nouvelle génération.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Digital</h3>
+        <p>Création de marques et d’écosystèmes e‑commerce globaux. Fusion des données, de la psychologie et du storytelling pour accélérer la croissance.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Labs</h3>
+        <p>Division expérimentale dédiée à l’intelligence artificielle, aux relations homme‑machine et aux prototypes d’automatisation avancés.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Studios</h3>
+        <p>Là où la créativité rencontre la technologie. Jeux mobiles et expériences visuelles inspirés de l’esthétique japonaise.</p>
+      </div>
+    </section>
+    <section class="philosophy">
+      <h2>Notre philosophie</h2>
+      <p>CHAKER Group crée l’harmonie entre la précision et l’émotion, la technologie et l’humanité. Nous croyons à une excellence durable, construite par la concentration calme, l’innovation et l’intégrité.</p>
+    </section>
+  </main>
+
+  <!-- RU -->
+  <main id="lang-ru" data-langblock>
+    <section class="hero">
+      <h2>Разработано в Японии. Создано для мира.</h2>
+      <p>Точность, спокойствие и инновации для следующей эпохи.</p>
+    </section>
+    <section class="divisions">
+      <div class="division">
+        <h3>CHAKER Technologies Japan</h3>
+        <p>Технологический центр Группы. Специализация: системы ИИ, автоматизация и архитектуры программного обеспечения нового поколения.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Digital</h3>
+        <p>Создаём бренды и глобальные e‑commerce‑экосистемы. Объединяем данные, психологию и сторителлинг для масштабирования бизнеса.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Labs</h3>
+        <p>Экспериментальное подразделение: искусственный интеллект, взаимодействие человека и компьютера, прототипы продвинутой автоматизации.</p>
+      </div>
+      <div class="division">
+        <h3>CHAKER Studios</h3>
+        <p>Где творчество встречается с технологией. Мобильные игры и визуальные впечатления, вдохновлённые японской эстетикой.</p>
+      </div>
+    </section>
+    <section class="philosophy">
+      <h2>Наша философия</h2>
+      <p>CHAKER Group создаёт гармонию между точностью и эмоциями, технологией и человечностью. Мы верим в долгосрочное превосходство, основанное на спокойной концентрации, инновациях и честности.</p>
+    </section>
+  </main>
+
   <footer>
     © 2025 CHAKER Group | シャケル・グループ — Designed in Japan. Built for the World.
   </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('.lang button');
+    const blocks = document.querySelectorAll('[data-langblock]');
+    buttons.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const lang = btn.getAttribute('data-lang');
+        buttons.forEach(b=>b.classList.toggle('active', b===btn));
+        blocks.forEach(b=>{
+          b.setAttribute('data-visible', b.id === 'lang-'+lang ? 'true' : 'false');
+        });
+        document.documentElement.setAttribute('lang', lang==='ja'?'ja':lang);
+      });
+    });
+  </script>
 </body>
 </html>
