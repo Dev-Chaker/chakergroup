@@ -30,9 +30,7 @@
   .brand{ text-align:left }
   .brand h1{ font-family:'Cormorant Garamond',serif; margin:0; font-size:28px; letter-spacing:3px; color:var(--silver); font-weight:600 }
   .brand .jp{ margin:2px 0 0; font-size:12px; color:var(--steel); letter-spacing:1px }
-  .lang{
-    display:flex; gap:10px; align-items:center;
-  }
+  .lang{ display:flex; gap:10px; align-items:center; }
   .lang button{
     appearance:none; border:1px solid var(--glass-border); background:var(--glass); color:var(--silver);
     padding:8px 12px; border-radius:10px; font-size:12px; letter-spacing:.5px; cursor:pointer;
@@ -44,6 +42,20 @@
   .hero{ text-align:center; padding:90px 20px; background:radial-gradient(circle at 50% 15%, rgba(255,255,255,.05) 0%, rgba(11,18,32,1) 65%); }
   .hero h2{ margin:0; font-size:34px; font-weight:600 }
   .hero p{ margin-top:16px; color:var(--silver); font-size:16px }
+
+  /* Status banner */
+  .status-banner{
+    display:inline-block;
+    margin-bottom:14px;
+    padding:8px 12px;
+    border:1px solid var(--glass-border);
+    background:var(--glass);
+    color:var(--steel);
+    font-size:12px;
+    border-radius:10px;
+    letter-spacing:.3px;
+    line-height:1.5;
+  }
 
   .divisions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:34px; padding:80px 8% }
   .division{
@@ -82,21 +94,25 @@
   <!-- EN -->
   <main id="lang-en" data-langblock data-visible="true">
     <section class="hero">
+      <div class="status-banner">
+        Under establishment — preparing launch in Japan (2026).<br>
+        Focus: AI Systems, Mobile Games, and Digital Innovation.
+      </div>
       <h2>Designed in Japan. Built for the World.</h2>
       <p>Precision, serenity, and innovation for the next era.</p>
     </section>
     <section class="divisions">
       <div class="division">
         <h3>CHAKER Technologies Japan</h3>
-        <p>Core innovation hub of the Group. Specializes in AI systems, automation, and next‑generation software architecture.</p>
+        <p>Core innovation hub of the Group. Specializes in AI systems, automation, and next-generation software architecture.</p>
       </div>
       <div class="division">
         <h3>CHAKER Digital</h3>
-        <p>Building brands and global e‑commerce ecosystems. Merging data, psychology, and storytelling to scale modern businesses.</p>
+        <p>Building brands and global e-commerce ecosystems. Merging data, psychology, and storytelling to scale modern businesses.</p>
       </div>
       <div class="division">
         <h3>CHAKER Labs</h3>
-        <p>Experimental division dedicated to artificial intelligence, human‑computer relations, and advanced automation prototypes.</p>
+        <p>Experimental division dedicated to artificial intelligence, human-computer relations, and advanced automation prototypes.</p>
       </div>
       <div class="division">
         <h3>CHAKER Studios</h3>
@@ -105,13 +121,17 @@
     </section>
     <section class="philosophy">
       <h2>Our Philosophy</h2>
-      <p>CHAKER Group creates harmony between precision and emotion, technology and humanity. We believe in long‑term excellence built through calm focus, innovation, and integrity.</p>
+      <p>CHAKER Group creates harmony between precision and emotion, technology and humanity. We believe in long-term excellence built through calm focus, innovation, and integrity.</p>
     </section>
   </main>
 
   <!-- JP -->
   <main id="lang-ja" data-langblock>
     <section class="hero">
+      <div class="status-banner">
+        設立準備中 — 日本でのローンチ（2026年）<br>
+        フォーカス：AIシステム／モバイルゲーム／デジタル・イノベーション
+      </div>
       <h2>日本で設計し、世界のために創造する。</h2>
       <p>次の時代のための精密さ、静けさ、そしてイノベーション。</p>
     </section>
@@ -142,6 +162,10 @@
   <!-- FR -->
   <main id="lang-fr" data-langblock>
     <section class="hero">
+      <div class="status-banner">
+        En cours de création — lancement prévu au Japon (2026).<br>
+        Focus : Systèmes d’IA, jeux mobiles et innovation digitale.
+      </div>
       <h2>Conçu au Japon. Créé pour le monde.</h2>
       <p>Précision, sérénité et innovation pour la prochaine ère.</p>
     </section>
@@ -152,11 +176,11 @@
       </div>
       <div class="division">
         <h3>CHAKER Digital</h3>
-        <p>Création de marques et d’écosystèmes e‑commerce globaux. Fusion des données, de la psychologie et du storytelling pour accélérer la croissance.</p>
+        <p>Création de marques et d’écosystèmes e-commerce globaux. Fusion des données, de la psychologie et du storytelling pour accélérer la croissance.</p>
       </div>
       <div class="division">
         <h3>CHAKER Labs</h3>
-        <p>Division expérimentale dédiée à l’intelligence artificielle, aux relations homme‑machine et aux prototypes d’automatisation avancés.</p>
+        <p>Division expérimentale dédiée à l’intelligence artificielle, aux relations homme-machine et aux prototypes d’automatisation avancés.</p>
       </div>
       <div class="division">
         <h3>CHAKER Studios</h3>
@@ -172,6 +196,10 @@
   <!-- RU -->
   <main id="lang-ru" data-langblock>
     <section class="hero">
+      <div class="status-banner">
+        На этапе создания — запуск в Японии (2026).<br>
+        Фокус: системы ИИ, мобильные игры и цифровые инновации.
+      </div>
       <h2>Разработано в Японии. Создано для мира.</h2>
       <p>Точность, спокойствие и инновации для следующей эпохи.</p>
     </section>
@@ -182,7 +210,7 @@
       </div>
       <div class="division">
         <h3>CHAKER Digital</h3>
-        <p>Создаём бренды и глобальные e‑commerce‑экосистемы. Объединяем данные, психологию и сторителлинг для масштабирования бизнеса.</p>
+        <p>Создаём бренды и глобальные e-commerce-экосистемы. Объединяем данные, психологию и сторителлинг для масштабирования бизнеса.</p>
       </div>
       <div class="division">
         <h3>CHAKER Labs</h3>
